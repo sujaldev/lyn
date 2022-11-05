@@ -41,10 +41,13 @@ class Axis:
 
 
 class Graph:
-    def __init__(self, x, y, x_units, y_units, negative_x_units, negative_y_units):
+    RESOLUTION = .01
+
+    def __init__(self, x, y, x_units, y_units, negative_x_units, negative_y_units, equations):
         self.x, self.y = x, y
         self.x_units, self.y_units = x_units, y_units
         self.negative_x_units, self.negative_y_units = negative_x_units, negative_y_units
+        self.equations = equations
 
         self.positive_x_axis = Axis(x, y, x_units)
         self.positive_y_axis = Axis(x, y, y_units, horizontal=False, direction=-1)
@@ -57,6 +60,26 @@ class Graph:
         self.positive_y_axis.render(canvas)
         self.negative_x_axis.render(canvas)
         self.negative_y_axis.render(canvas)
+
+        for equation in self.equations:
+            self.render_equation(canvas, equation)
+
+    def render_equation(self, canvas, equation):
+        conversion_num = self.positive_x_axis.UNIT_GAP
+        x_end = self.x + self.x_units * conversion_num
+        x_local = 0
+        while self.x + x_local * conversion_num <= x_end:
+            y_local = equation(x_local)
+            next_x_local = x_local + self.RESOLUTION
+            next_y_local = equation(next_x_local)
+
+            canvas.drawLine(
+                self.x + x_local * conversion_num, self.y - y_local * conversion_num,
+                self.x + next_x_local * conversion_num, self.y - next_y_local * conversion_num,
+                skia.Paint(Color=skia.ColorCYAN, StrokeWidth=2)
+            )
+
+            x_local += self.RESOLUTION
 
     def __setattr__(self, key, value):
         self.__dict__[key] = value
