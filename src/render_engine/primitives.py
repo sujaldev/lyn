@@ -35,3 +35,30 @@ class Rectangle:
         )
         # noinspection PyTypeChecker
         canvas.drawRect(rect, paint)
+
+
+class Circle:
+    def __init__(self, x, y, radius, stroke_width=20, stroke_color=(255, 86, 128, 255),
+                 fill=(199, 199, 199, 255)):
+        self.x, self.y = x, y
+        self.radius = radius
+        self.stroke_width = stroke_width
+        self.stroke_color = stroke_color
+        self.fill = fill
+
+    def render_border(self, canvas):
+        canvas: skia.Canvas
+        half_stroke_width = self.stroke_width / 2
+        paint = skia.Paint(StrokeWidth=self.stroke_width, Color=skia.Color(*self.stroke_color),
+                           Style=skia.Paint.kStroke_Style)
+        canvas.drawCircle(self.x, self.y, self.radius + half_stroke_width, paint)
+
+    def render(self, canvas):
+        canvas: skia.Canvas
+        # Draw border if it exists
+        if self.stroke_width > 0:
+            self.render_border(canvas)
+
+        # Draw Fill
+        paint = skia.Paint(Color=skia.Color(*self.fill), Style=skia.Paint.kFill_Style)
+        canvas.drawCircle(self.x, self.y, self.radius, paint)

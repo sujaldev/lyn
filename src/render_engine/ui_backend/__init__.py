@@ -25,6 +25,8 @@ class Window:
         self.height = height
         self.frame_renderer = None
 
+        self.canvas_color = defaults.canvas_color
+
         # Center Window By default
         self.x, self.y = x, y
         if x is None:
@@ -80,7 +82,7 @@ class Window:
 
         # make the canvas white by default
         with surface as canvas:
-            canvas.drawColor(skia.Color(*defaults.canvas_color))
+            canvas.drawColor(skia.Color(*self.canvas_color))
 
         return surface
 
