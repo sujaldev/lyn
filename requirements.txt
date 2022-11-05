@@ -1,1 +1,3 @@
 lark
+skia-python
+PySDL2
