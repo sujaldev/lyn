@@ -1,8 +1,6 @@
 import skia
-import sdl2 as sdl
 from src.render_engine.ui_backend import Window
 import src.render_engine.animations as animations
-import src.render_engine.primitives as primitives
 
 
 class LynRenderingApi:
@@ -28,7 +26,6 @@ class LynRenderingApi:
         for obj in self.animated_objects:
             if obj is not None:
                 obj.render(canvas)
-        print(self.animated_objects)
 
         if not self.animation_queue:
             return
@@ -41,6 +38,9 @@ class LynRenderingApi:
 
     def draw(self, primitive):
         self.animation_queue.append(animations.Draw(primitive))
+
+    def write_line(self, primitive, duration=2):
+        self.animation_queue.append(animations.WriteLine(primitive, duration))
 
     def fade_in(self, primitive, duration=1):
         self.animation_queue.append(animations.FadeIn(primitive, duration))

@@ -21,6 +21,30 @@ class Draw(Animation):
         return True, self.primitive
 
 
+class WriteLine(Animation):
+    def __init__(self, primitive, duration):
+        super().__init__(primitive)
+        self.duration = duration
+        self.x_start, self.y_start = self.primitive.x1, self.primitive.y1
+        self.x_end, self.y_end = self.primitive.x2, self.primitive.y2
+        self.start_time = None
+
+    def play(self, canvas, time):
+        if self.start_time is None:
+            self.start_time = time
+
+        time = time - self.start_time
+        percentage = math.sin(time / self.duration) if math.cos(time / self.duration) > 0 else 1
+
+        self.primitive.x2 = self.x_start + ((self.x_end - self.x_start) * percentage)
+        self.primitive.y2 = self.y_start + ((self.y_end - self.y_start) * percentage)
+        self.primitive.render(canvas)
+
+        if percentage >= 1:
+            return True, self.primitive
+        return False, self.primitive
+
+
 class FadeIn(Animation):
     def __init__(self, primitive, duration=1):
         super().__init__(primitive)
@@ -125,10 +149,11 @@ class Move(Animation):
             self.start_time = time
 
         time = time - self.start_time
-        print(self.x_start, self.x_end, time, self.start_time + self.duration)
-        self.primitive.x = ease(self.x_start, self.x_end, time, self.start_time + self.duration)
-        self.primitive.y = ease(self.y_start, self.y_end, time, self.start_time + self.duration)
+        percentage = math.sin(time / self.duration) if math.cos(time / self.duration) > 0 else 1
 
-        if time >= self.start_time + self.duration:
+        self.primitive.x = self.x_start + ((self.x_end - self.x_start) * percentage)
+        self.primitive.y = self.y_start + ((self.y_end - self.y_start) * percentage)
+
+        if percentage >= 1:
             return True, self.primitive
         return False, self.primitive

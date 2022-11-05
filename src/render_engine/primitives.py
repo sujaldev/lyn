@@ -1,6 +1,25 @@
 import skia
 
 
+class Line:
+    def __init__(self, x1, y1, x2, y2, width=2, fill=(255, 86, 128, 255)):
+        self.x1, self.y1 = x1, y1
+        self.x2, self.y2 = x2, y2
+        self.width = width
+        self.fill = fill
+
+    def render(self, canvas):
+        canvas: skia.Canvas
+        canvas.drawLine(
+            self.x1, self.y1, self.x2, self.y2,
+            skia.Paint(
+                Color=skia.Color(*self.fill),
+                StrokeWidth=self.width,
+                StrokeCap=skia.Paint.kRound_Cap,
+            )
+        )
+
+
 class Rectangle:
     def __init__(self, x, y, width, height, stroke_width=20, stroke_color=(255, 86, 128, 255),
                  fill=(199, 199, 199, 255)):
@@ -19,6 +38,7 @@ class Rectangle:
             self.x - half_stroke_width, self.y - half_stroke_width,
             self.x + self.width + half_stroke_width, self.y + self.height + half_stroke_width
         )
+        # noinspection PyTypeChecker
         canvas.drawRect(rect, paint)
 
     def render(self, canvas):
