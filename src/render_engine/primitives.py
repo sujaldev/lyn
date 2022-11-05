@@ -12,18 +12,14 @@ class Rectangle:
 
     def render_border(self, canvas):
         canvas: skia.Canvas
-        paint = skia.Paint(StrokeWidth=self.stroke_width, Color=skia.Color(*self.stroke_color))
         half_stroke_width = self.stroke_width / 2
-        x1 = int(self.x - half_stroke_width)
-        x2 = x1 + self.width + self.stroke_width
-        y1 = int(self.y - half_stroke_width)
-        canvas.drawLine(x1, self.y, x1, self.y + self.height, paint)  # right border
-        canvas.drawLine(x2, self.y, x2, self.y + self.height, paint)  # left border
-        canvas.drawLine(x1 - half_stroke_width, y1, x2 + half_stroke_width, y1, paint)  # top border
-        canvas.drawLine(  # bottom border
-            x1 - half_stroke_width, y1 + self.height + self.stroke_width,
-            x2 + half_stroke_width, y1 + self.height + self.stroke_width, paint
+        paint = skia.Paint(StrokeWidth=self.stroke_width, Color=skia.Color(*self.stroke_color),
+                           Style=skia.Paint.kStroke_Style)
+        rect = skia.Rect(
+            self.x - half_stroke_width, self.y - half_stroke_width,
+            self.x + self.width + half_stroke_width, self.y + self.height + half_stroke_width
         )
+        canvas.drawRect(rect, paint)
 
     def render(self, canvas):
         canvas: skia.Canvas
