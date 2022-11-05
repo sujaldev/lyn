@@ -1,5 +1,5 @@
 import math
-from time import time as current_time
+from src.render_engine.mathematics.bezier import ease
 
 import skia
 
@@ -110,3 +110,25 @@ class Delay(Animation):
 
         time = time - self.start_time
         return time >= self.duration, None
+
+
+class Move(Animation):
+    def __init__(self, primitive, x, y, duration=2):
+        super().__init__(primitive)
+        self.x_start, self.y_start = self.primitive.x, self.primitive.y
+        self.x_end, self.y_end = x, y
+        self.duration = duration
+        self.start_time = None
+
+    def play(self, canvas, time):
+        if self.start_time is None:
+            self.start_time = time
+
+        time = time - self.start_time
+        print(self.x_start, self.x_end, time, self.start_time + self.duration)
+        self.primitive.x = ease(self.x_start, self.x_end, time, self.start_time + self.duration)
+        self.primitive.y = ease(self.y_start, self.y_end, time, self.start_time + self.duration)
+
+        if time >= self.start_time + self.duration:
+            return True, self.primitive
+        return False, self.primitive

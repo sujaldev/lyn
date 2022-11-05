@@ -28,6 +28,7 @@ class LynRenderingApi:
         for obj in self.animated_objects:
             if obj is not None:
                 obj.render(canvas)
+        print(self.animated_objects)
 
         if not self.animation_queue:
             return
@@ -35,7 +36,8 @@ class LynRenderingApi:
         animation_complete, completed_obj = self.animation_queue[-1].play(canvas, time)
         if animation_complete:
             self.animation_queue.pop()
-            self.animated_objects.append(completed_obj)
+            if completed_obj is not None and completed_obj not in self.animated_objects:
+                self.animated_objects.append(completed_obj)
 
     def draw(self, primitive):
         self.animation_queue.append(animations.Draw(primitive))
@@ -48,3 +50,6 @@ class LynRenderingApi:
 
     def delay(self, duration=1):
         self.animation_queue.append(animations.Delay(duration))
+
+    def move(self, primitive, x, y, duration=2):
+        self.animation_queue.append(animations.Move(primitive, x, y, duration))
