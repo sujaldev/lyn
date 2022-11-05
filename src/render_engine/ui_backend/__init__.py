@@ -1,12 +1,15 @@
-import skia
-import sdl2 as sdl
+import math
 from ctypes import byref as pointer
+from time import time, sleep
+
+import sdl2 as sdl
+import skia
 
 import src.render_engine.ui_backend.defaults as defaults
 
 
 class Window:
-    DEFAULT_FLAGS = sdl.SDL_WINDOW_SHOWN
+    DEFAULT_FLAGS = sdl.SDL_WINDOW_SHOWN | sdl.SDL_WINDOW_RESIZABLE
     BYTE_ORDER = {
         # ---------- ->   RED        GREEN       BLUE        ALPHA
         "BIG_ENDIAN": (0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff),
@@ -20,6 +23,7 @@ class Window:
         self.title = bytes(title, "utf8")
         self.width = width
         self.height = height
+        self.frame_renderer = None
 
         # Center Window By default
         self.x, self.y = x, y
@@ -114,26 +118,46 @@ class Window:
         sdl.SDL_UpdateWindowSurface(self.sdl_window)
 
     def event_loop(self, event):
+        while sdl.SDL_PollEvent(pointer(event)) != 0:
 
-        while True:
-            while sdl.SDL_PollEvent(pointer(event)) != 0:
+            window_resized = event.type == sdl.SDL_WINDOWEVENT and event.window.event == sdl.SDL_WINDOWEVENT_RESIZED
+            if window_resized:
+                self.handle_resize(event)
 
-                window_resized = event.type == sdl.SDL_WINDOWEVENT and event.window.event == sdl.SDL_WINDOWEVENT_RESIZED
-                if window_resized:
-                    self.handle_resize(event)
+            if event.type == sdl.SDL_QUIT:
+                return 0
 
-                if event.type == sdl.SDL_QUIT:
-                    self.handle_quit()
-                    return
+    @staticmethod
+    def cap_framerate(start, end, fps):
+        frame_delta = 1 / fps
+        dt = frame_delta - (end - start)
+        if dt > 0:
+            sleep(dt)
+        return dt
 
     def main_loop(self):
         self.update()
 
-        # Event loop
-        event = sdl.SDL_Event()
-        if self.event_loop(event) == 0:
-            self.handle_quit()
-            return
+        init_time = time()
+
+        while True:
+            start = time() - init_time
+
+            # Event loop
+            event = sdl.SDL_Event()
+            if self.event_loop(event) == 0:
+                self.handle_quit()
+                return
+
+            if self.frame_renderer:
+                with self.skia_surface as canvas:
+                    canvas: skia.Canvas
+                    self.frame_renderer(canvas, time() - init_time)
+                    self.update()
+
+            # Frame
+            end = time() - init_time
+            self.cap_framerate(start, end, defaults.fps)
 
     def handle_resize(self, event):
         self.width = event.window.data1
