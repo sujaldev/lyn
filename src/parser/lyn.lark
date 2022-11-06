@@ -1,0 +1,45 @@
+start                           : main_declarations
+
+main_declarations               : main_assignment~1..3
+main_assignment                 : MAIN_ASSIGNMENT_KEYWORDS scope
+MAIN_ASSIGNMENT_KEYWORDS        : "Animate"
+                                | "Interact"
+scope                           : "{" statements* "}"
+
+statements                      : assignment statements*
+                                | animate_instruction statements*
+                                | python_blocks statements*
+
+
+assignment                      : OBJECT var_name dict
+
+OBJECT                          : "Line"
+                                | "Circle"
+                                | "Rectangle"
+                                | "Graph"
+
+var_name                        : (letter | UNDERSCORE) (letter | DIGIT | UNDERSCORE)*
+letter                          : LOWERCASE | UPPERCASE
+LOWERCASE                       : "a".."z"
+UPPERCASE                       : "A".."Z"
+UNDERSCORE                      : "_"
+DIGIT                           : "0".."9"
+
+dict                            : "{" key_value_pair ("," key_value_pair)* "}"
+key_value_pair                  : var_name ":" value
+value                           : number
+                                | var_name
+number                          : DIGIT
+                                | "1".."9" DIGIT*
+
+animate_instruction             : ANIMATE_KEYWORD var_name dict
+ANIMATE_KEYWORD                 : "OnScreen"i | "play"i
+
+
+python_blocks                   : eval | exec
+eval                            : "pyEval" python_block
+exec                            : "pyExec" python_block
+python_block                    : /\{.*\}/
+
+%import common.WS
+%ignore WS
