@@ -1,3 +1,5 @@
+![bg_crop](https://user-images.githubusercontent.com/75830554/200155641-e8d936b2-5deb-427f-b6a3-c1621f381aae.png)
+
 # Lyn
 
 A programming language to create mathematical animations (but not limited to mathematics).
