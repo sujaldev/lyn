@@ -1,4 +1,6 @@
-from lark import Lark, Transformer, Tree, Token
+import sys
+
+from lark import Lark, Transformer, Token
 
 from src.render_engine.rendering_api import LynRenderingApi as Lyn
 import src.render_engine.primitives as primitives
@@ -14,40 +16,10 @@ def camel_to_snake(s):
 
 parser = Lark(grammar)
 
-source_code = """
-Animate {
-  Circle my_circle {
-    radius: 50,
-    x: 100, y: 300
-  }
+file_path = sys.argv[-1] if len(sys.argv) > 1 else __file__.removesuffix("parser.py") + "demo.lyn"
 
-  Rectangle my_rect {
-    x: 500, y: 500,
-    width: 200, height: 100, stroke_width: 10
-  }
-
-  Line my_line {
-    x1: 700, y1: 20, x2: 100, y2: 700
-  }
-
-  play WriteLine {
-    object: my_line
-  }
-
-  play FadeIn {
-    object: my_rect
-  }
-
-  play Delay {
-    duration: 2
-  }
-
-  play FadeIn {
-    object: my_circle
-  }
-
-}
-"""
+with open(file_path) as file:
+    source_code = file.read()
 
 
 # noinspection PyMethodMayBeStatic,PyPep8Naming
@@ -60,7 +32,6 @@ class Parser(Transformer):
         self.api.init_window("Lyn Compiler", 1000, 800)
 
     def start(self, tokens):
-        print(tokens)
         return tokens
 
     def main_assignment(self, tokens):
@@ -89,7 +60,6 @@ class Parser(Transformer):
         return animation_type, animation_params
 
     def python_blocks(self, tokens):
-        print(tokens)
         return tokens
 
     def OBJECT(self, token):
@@ -128,4 +98,3 @@ class Parser(Transformer):
 p = Parser()
 p.transform(parser.parse(source_code))
 p.api.start_window_loop()
-# print(parser.parse(source_code).pretty())

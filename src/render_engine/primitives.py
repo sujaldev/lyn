@@ -48,13 +48,14 @@ class Rectangle:
             self.render_border(canvas)
 
         # Draw Fill
-        rect = skia.Rect(self.x, self.y, self.x + self.width, self.y + self.height)
-        paint = skia.Paint(
-            Color=skia.Color(*self.fill),
-            Style=skia.Paint.kFill_Style
-        )
-        # noinspection PyTypeChecker
-        canvas.drawRect(rect, paint)
+        if self.fill is not None:
+            rect = skia.Rect(self.x, self.y, self.x + self.width, self.y + self.height)
+            paint = skia.Paint(
+                Color=skia.Color(*self.fill),
+                Style=skia.Paint.kFill_Style
+            )
+            # noinspection PyTypeChecker
+            canvas.drawRect(rect, paint)
 
 
 class Circle:
@@ -82,3 +83,20 @@ class Circle:
         # Draw Fill
         paint = skia.Paint(Color=skia.Color(*self.fill), Style=skia.Paint.kFill_Style)
         canvas.drawCircle(self.x, self.y, self.radius, paint)
+
+
+class Text:
+    def __init__(self, text, x, y, size=20, fill=(215, 215, 215, 255)):
+        self.text = text
+        self.x, self.y = x, y
+        self.size = size
+        self.fill = fill
+
+    def render(self, canvas):
+        canvas: skia.Canvas
+        # noinspection PyTypeChecker
+        canvas.drawSimpleText(
+            self.text, self.x, self.y,
+            skia.Font(skia.Typeface("Arial"), self.size),
+            skia.Paint(Color=skia.Color(*self.fill))
+        )
