@@ -20,20 +20,28 @@ Animate {
     radius: 50,
     x: 100, y: 300
   }
-  
+
   Rectangle my_rect {
     x: 500, y: 500,
     width: 200, height: 100, stroke_width: 10
   }
-  
+
+  Line my_line {
+    x1: 700, y1: 20, x2: 100, y2: 700
+  }
+
+  play WriteLine {
+    object: my_line
+  }
+
   play FadeIn {
     object: my_rect
   }
-  
+
   play Delay {
     duration: 2
   }
-  
+
   play FadeIn {
     object: my_circle
   }
@@ -79,6 +87,10 @@ class Parser(Transformer):
                 animation_params[key] = self.globals[val]
         animation_type(**animation_params)
         return animation_type, animation_params
+
+    def python_blocks(self, tokens):
+        print(tokens)
+        return tokens
 
     def OBJECT(self, token):
         return token.value
