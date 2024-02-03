@@ -69,7 +69,7 @@ class Graph:
     def render_equation(self, canvas, equation):
         conversion_num = self.positive_x_axis.UNIT_GAP
         x_end = self.x + self.x_units * conversion_num
-        x_local = 0
+        x_local = -abs(self.negative_x_units)
         while self.x + x_local * conversion_num <= x_end:
             y_local = equation(x_local)
             next_x_local = x_local + self.RESOLUTION
