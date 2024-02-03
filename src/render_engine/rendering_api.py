@@ -34,6 +34,10 @@ class LynRenderingApi:
         if callable(current_animation):
             self.animation_queue[-1] = self.animation_queue[-1]()
 
+        if self.animation_queue[-1] is None:
+            self.animation_queue.pop()
+            return
+
         animation_complete, completed_obj = self.animation_queue[-1].play(canvas, time)
         if animation_complete:
             self.animation_queue.pop()
@@ -57,3 +61,7 @@ class LynRenderingApi:
 
     def move(self, primitive, x, y, duration=2):
         self.animation_queue.append(lambda: animations.Move(primitive, x, y, duration))
+
+    def do(self, func):
+        # Quick fix to allow sequential execution
+        self.animation_queue.append(func)
