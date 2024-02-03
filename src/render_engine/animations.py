@@ -51,7 +51,9 @@ class FadeIn(Animation):
         self.duration = duration
 
         self.fill_alpha = self.primitive.fill[-1] if self.primitive.fill[-1] else 255
-        self.stroke_color = self.primitive.stroke_color[-1] if self.primitive.stroke_color[-1] else 255
+        self.has_stroke = getattr(self.primitive, "stroke_color", None)
+        if self.has_stroke:
+            self.stroke_color = self.primitive.stroke_color[-1] if self.primitive.stroke_color[-1] else 255
 
         self.start_time = None
 
@@ -65,19 +67,21 @@ class FadeIn(Animation):
         if percentage >= 1:
             fill = list(self.primitive.fill)
             fill[-1] = 255
-            stroke = list(self.primitive.stroke_color)
-            stroke[-1] = 255
             self.primitive.fill = tuple(fill)
-            self.primitive.stroke_color = tuple(stroke)
+            if self.has_stroke:
+                stroke = list(self.primitive.stroke_color)
+                stroke[-1] = 255
+                self.primitive.stroke_color = tuple(stroke)
             self.primitive.render(canvas)
             return True, self.primitive
 
         fill = list(self.primitive.fill)
         fill[-1] = int(percentage * self.fill_alpha)
-        stroke = list(self.primitive.stroke_color)
-        stroke[-1] = int(percentage * self.stroke_color)
         self.primitive.fill = tuple(fill)
-        self.primitive.stroke_color = tuple(stroke)
+        if self.has_stroke:
+            stroke = list(self.primitive.stroke_color)
+            stroke[-1] = int(percentage * self.stroke_color)
+            self.primitive.stroke_color = tuple(stroke)
 
         self.primitive.render(canvas)
         return False, self.primitive
@@ -89,7 +93,9 @@ class FadeOut(Animation):
         self.duration = duration
 
         self.fill_alpha = self.primitive.fill[-1] if self.primitive.fill[-1] else 255
-        self.stroke_color = self.primitive.stroke_color[-1] if self.primitive.stroke_color[-1] else 255
+        self.has_stroke = getattr(self.primitive, "stroke_color", None)
+        if self.has_stroke:
+            self.stroke_color = self.primitive.stroke_color[-1] if self.primitive.stroke_color[-1] else 255
 
         self.start_time = None
 
@@ -104,19 +110,21 @@ class FadeOut(Animation):
         if percentage <= 0:
             fill = list(self.primitive.fill)
             fill[-1] = 0
-            stroke = list(self.primitive.stroke_color)
-            stroke[-1] = 0
             self.primitive.fill = tuple(fill)
-            self.primitive.stroke_color = tuple(stroke)
+            if self.has_stroke:
+                stroke = list(self.primitive.stroke_color)
+                stroke[-1] = 0
+                self.primitive.stroke_color = tuple(stroke)
             self.primitive.render(canvas)
             return True, self.primitive
 
         fill = list(self.primitive.fill)
         fill[-1] = int(percentage * self.fill_alpha)
-        stroke = list(self.primitive.stroke_color)
-        stroke[-1] = int(percentage * self.stroke_color)
         self.primitive.fill = tuple(fill)
-        self.primitive.stroke_color = tuple(stroke)
+        if self.has_stroke:
+            stroke = list(self.primitive.stroke_color)
+            stroke[-1] = int(percentage * self.stroke_color)
+            self.primitive.stroke_color = tuple(stroke)
 
         self.primitive.render(canvas)
         return False, self.primitive
