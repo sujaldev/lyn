@@ -17,6 +17,14 @@ ourselves to go to sleep). Our team name was vormir:
 Credits to Divyansh who made the banner visible on top of this readme and came up with this awesome name (Lyn and
 Lynium) and also made one cool presentation present in this repository in the docs folder.
 
+## Demo
+
+<div align=center>
+  <video src="https://github.com/sujaldev/lyn/assets/75830554/7fa48761-d513-4c40-a4f7-962e8a860354" width=500 autoplay>
+</div>
+
+Run `demo.py`.
+
 ## Run instructions
 
 ```bash
@@ -28,7 +36,7 @@ cd lyn
 pip install -r requirements.txt  
 
 cd src/
-export PYTHONPATH='.'
+export PYTHONPATH='.' # or use absolute paths
 
 cd parser
 python parser.py
